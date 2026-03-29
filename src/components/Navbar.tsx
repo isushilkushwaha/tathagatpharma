@@ -103,7 +103,7 @@ export default function Navbar() {
                 </Link>
 
                 <span
-                  className={`absolute left-0 -bottom-1 h-[2px] bg-green-600 transition-all duration-300 ${
+                  className={`absolute left-0 -bottom-1 h-0.5 bg-green-600 transition-all duration-300 ${
                     isActive ? "w-full" : "w-0 group-hover:w-full"
                   }`}
                 />

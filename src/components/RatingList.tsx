@@ -81,7 +81,7 @@ export default function RatingSection() {
             ratings.map((r) => (
               <div
                 key={r.id}
-                className="min-w-[300px] h-[260px] border rounded-lg p-5 flex flex-col justify-between hover:shadow-md transition"
+                className="min-w-75 h-65 border rounded-lg p-5 flex flex-col justify-between hover:shadow-md transition"
               >
 
                 {/* ⭐ User Rating */}

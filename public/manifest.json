@@ -1,20 +1,26 @@
 {
-  "name": "Tathagat Medical App",
+  "name": "Tathagat Pharma",
   "short_name": "Medical",
+  "description": "Medical & Pharma Clinic",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#ffffff",
   "theme_color": "#0ea5e9",
+
   "icons": [
     {
-      "src": "/android-chrome-192x192.png",
+      "src": "/logo1-192x192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "/android-chrome-512x512.png",
+      "src": "/logo2-512x512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }

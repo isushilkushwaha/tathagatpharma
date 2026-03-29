@@ -3,11 +3,11 @@ import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 
 const DOCTORS = [
   {
-    name: "Drx. Buddhraj Kushwaha",
+    name: "Raj Kushwaha",
     role: "D.Pharma (General Medicine)",
     image: "/dr1.jpeg",
     experience:
-      "BDS , MDS - Periodontology and Oral Implantology, 10 Years Experience",
+      "10 Years Experience",
     accentColor: "bg-rose-500",
   },
   {
@@ -15,16 +15,16 @@ const DOCTORS = [
     role: "Nursing Officer",
     image: "/dr2.jpeg",
     experience:
-      "BDS , MDS - Periodontology and Oral Implantology, 05 Years Experience",
+      " 05 Years Experience",
     accentColor: "bg-blue-500",
   },
 ];
 
 const DoctorCard = ({ doctor }: { doctor: (typeof DOCTORS)[0] }) => (
-  <div className="w-full max-w-[420px] bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden hover:shadow-lg transition-all duration-300">
+  <div className="w-full max-w-105 bg-white rounded-2xl shadow-md border border-slate-100 overflow-hidden hover:shadow-lg transition-all duration-300">
     
     {/* Square Layout */}
-    <div className="grid grid-cols-2 h-[220px]">
+    <div className="grid grid-cols-2 h-55">
       
       {/* LEFT SIDE - DETAILS */}
       <div className="p-4 flex flex-col justify-between">
@@ -46,12 +46,12 @@ const DoctorCard = ({ doctor }: { doctor: (typeof DOCTORS)[0] }) => (
         </div>
 
         {/* Social Icons */}
-        <div className="flex gap-3 text-slate-300">
+        {/* <div className="flex gap-3 text-slate-300">
           <Linkedin size={14} className="hover:text-blue-600 cursor-pointer" />
           <Facebook size={14} className="hover:text-blue-600 cursor-pointer" />
           <Twitter size={14} className="hover:text-blue-400 cursor-pointer" />
           <Instagram size={14} className="hover:text-pink-600 cursor-pointer" />
-        </div>
+        </div> */}
       </div>
 
       {/* RIGHT SIDE - IMAGE */}
@@ -60,6 +60,7 @@ const DoctorCard = ({ doctor }: { doctor: (typeof DOCTORS)[0] }) => (
           src={doctor.image}
           alt={doctor.name}
           fill
+          sizes="(max-width: 768px) 100vw, 50vw"
           className="object-cover"
         />
       </div>

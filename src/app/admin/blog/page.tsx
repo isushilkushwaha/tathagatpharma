@@ -1,3 +1,6 @@
+
+
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -10,24 +13,33 @@ import {
   deleteDoc,
   doc,
   serverTimestamp,
+  query,
+  orderBy,
 } from "firebase/firestore";
 
 export default function AdminBlogsPage() {
   const [blogs, setBlogs] = useState<any[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [filter, setFilter] = useState("all");
 
   const [form, setForm] = useState({
     title: "",
     content: "",
   });
 
-  // 📥 Fetch Blogs
   const fetchBlogs = async () => {
-    const snapshot = await getDocs(collection(db, "blogs"));
+    const q = query(
+      collection(db, "blogs"),
+      orderBy("createdAt", "desc")
+    );
+
+    const snapshot = await getDocs(q);
+
     const data = snapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
     }));
+
     setBlogs(data);
   };
 
@@ -35,7 +47,6 @@ export default function AdminBlogsPage() {
     fetchBlogs();
   }, []);
 
-  // ➕ Create / Update Blog
   const handleSubmit = async () => {
     if (!form.title || !form.content) {
       alert("Title & Content required");
@@ -43,37 +54,30 @@ export default function AdminBlogsPage() {
     }
 
     if (editingId) {
-      // ✏️ Update
       await updateDoc(doc(db, "blogs", editingId), {
         ...form,
         updatedAt: serverTimestamp(),
       });
-      alert("Updated ✅");
     } else {
-      // ➕ Create
       await addDoc(collection(db, "blogs"), {
         ...form,
         status: "draft",
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       });
-      alert("Created ✅");
     }
 
-    // Reset
     setForm({ title: "", content: "" });
     setEditingId(null);
     fetchBlogs();
   };
 
-  // 🗑 Delete
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this blog?")) return;
     await deleteDoc(doc(db, "blogs", id));
     fetchBlogs();
   };
 
-  // 🔄 Publish Toggle
   const toggleStatus = async (id: string, status: string) => {
     await updateDoc(doc(db, "blogs", id), {
       status: status === "published" ? "draft" : "published",
@@ -81,7 +85,6 @@ export default function AdminBlogsPage() {
     fetchBlogs();
   };
 
-  // ✏️ Edit Click
   const handleEdit = (blog: any) => {
     setEditingId(blog.id);
     setForm({
@@ -90,69 +93,25 @@ export default function AdminBlogsPage() {
     });
   };
 
+  const filteredBlogs = blogs.filter((blog) => {
+    if (filter === "all") return true;
+    return blog.status === filter;
+  });
+
   return (
-    <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="h-screen overflow-hidden flex flex-col p-4 max-w-3xl mx-auto gap-3">
 
-      {/* ===================== */}
-      {/* 📋 BLOG LIST */}
-      {/* ===================== */}
-      <div className="space-y-4">
-        <h2 className="text-xl font-bold">All Blogs</h2>
+      {/* ✍️ CREATE BLOG (TOP) */}
+      <div className="bg-white border rounded-xl shadow-md p-4 space-y-3">
 
-        {blogs.map((blog) => (
-          <div
-            key={blog.id}
-            className="border p-4 rounded flex justify-between items-center"
-          >
-            <div>
-              <h3 className="font-semibold">{blog.title}</h3>
-              <p className="text-sm text-gray-500">
-                {blog.status}
-              </p>
-            </div>
-
-            <div className="flex gap-2">
-
-              <button
-                onClick={() => handleEdit(blog)}
-                className="bg-blue-500 text-white px-2 py-1 rounded"
-              >
-                Edit
-              </button>
-
-              <button
-                onClick={() => toggleStatus(blog.id, blog.status)}
-                className="bg-yellow-500 text-amber-300  px-2 py-1 rounded"
-              >
-                {blog.status === "published"
-                  ? "Unpublish"
-                  : "Publish"}
-              </button>
-
-              <button
-                onClick={() => handleDelete(blog.id)}
-                className="bg-red-500 text-white px-2 py-1 rounded"
-              >
-                Delete
-              </button>
-
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {/* ===================== */}
-      {/* ✍️ BLOG FORM */}
-      {/* ===================== */}
-      <div className="space-y-4">
-        <h2 className="text-xl font-bold">
+        <h2 className="text-sm font-semibold">
           {editingId ? "Edit Blog" : "Create Blog"}
         </h2>
 
         <input
           placeholder="Title"
           value={form.title}
-          className="w-full border p-2"
+          className="w-full border p-2 rounded-lg text-sm"
           onChange={(e) =>
             setForm({ ...form, title: e.target.value })
           }
@@ -161,7 +120,7 @@ export default function AdminBlogsPage() {
         <textarea
           placeholder="Content"
           value={form.content}
-          className="w-full border p-2 h-40"
+          className="w-full border p-2 h-20 rounded-lg text-sm"
           onChange={(e) =>
             setForm({ ...form, content: e.target.value })
           }
@@ -169,12 +128,87 @@ export default function AdminBlogsPage() {
 
         <button
           onClick={handleSubmit}
-          className={`px-4 py-2 text-white rounded ${
+          className={`w-full py-2 text-white rounded-lg ${
             editingId ? "bg-blue-600" : "bg-green-600"
           }`}
         >
           {editingId ? "Update Blog" : "Create Blog"}
         </button>
+      </div>
+
+      {/* 🔘 FILTER BUTTONS */}
+      <div className="flex gap-2 justify-center flex-wrap">
+        {["all", "published", "draft"].map((f) => (
+          <button
+            key={f}
+            onClick={() => setFilter(f)}
+            className={`px-4 py-1.5 rounded-full text-sm ${
+              filter === f
+                ? "bg-blue-600 text-white"
+                : "bg-gray-200"
+            }`}
+          >
+            {f.toUpperCase()}
+          </button>
+        ))}
+      </div>
+
+      {/* 📋 BLOG LIST (ONLY SCROLL AREA) */}
+      <div className="flex-1 overflow-y-auto space-y-3 pr-1">
+
+        {filteredBlogs.map((blog) => (
+          <div
+            key={blog.id}
+            className="bg-white border rounded-xl p-4 shadow-sm space-y-2"
+          >
+            <div className="flex justify-between items-start">
+              <h3 className="font-semibold text-sm">
+                {blog.title}
+              </h3>
+
+              <span
+                className={`text-xs px-2 py-1 rounded-full ${
+                  blog.status === "published"
+                    ? "bg-green-100 text-green-600"
+                    : "bg-yellow-100 text-yellow-600"
+                }`}
+              >
+                {blog.status}
+              </span>
+            </div>
+
+            <div className="flex gap-2 flex-wrap">
+              <button
+                onClick={() => handleEdit(blog)}
+                className="flex-1 text-xs bg-blue-500 text-white py-1.5 rounded"
+              >
+                Edit
+              </button>
+
+              <button
+                onClick={() => toggleStatus(blog.id, blog.status)}
+                className="flex-1 text-xs bg-yellow-500 text-white py-1.5 rounded"
+              >
+                {blog.status === "published"
+                  ? "Unpublish"
+                  : "Publish"}
+              </button>
+
+              <button
+                onClick={() => handleDelete(blog.id)}
+                className="flex-1 text-xs bg-red-500 text-white py-1.5 rounded"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+
+        {filteredBlogs.length === 0 && (
+          <p className="text-center text-gray-500 text-sm">
+            No blogs found
+          </p>
+        )}
       </div>
 
     </div>

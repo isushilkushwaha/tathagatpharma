@@ -2,6 +2,7 @@
 
 import { LoginForm } from "@/components/login-form"
 import Link from "next/link"
+import Image from "next/image";
 
 export default function LoginPage() {
   return (
@@ -43,11 +44,13 @@ export default function LoginPage() {
         </div>
       </div>
       <div className="relative  bg-muted lg:block">
-        <img
-          src="/h2.jpg"
-          alt="Image"
-          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
-        />
+        <Image
+        src="/h2.jpg"
+        alt="Login background"
+        fill
+        priority
+        className="object-cover dark:brightness-[0.2] dark:grayscale"
+/>
       </div>
     </div>
   )

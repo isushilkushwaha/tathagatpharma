@@ -69,7 +69,7 @@ export default function BlogSection() {
               <div
                 key={blog.id}
                 onClick={() => router.push(`/blogs/${blog.id}`)}
-                className="min-w-[300px] cursor-pointer border rounded-lg p-4 hover:shadow-md transition flex flex-col justify-between"
+                className="min-w-75 cursor-pointer border rounded-lg p-4 hover:shadow-md transition flex flex-col justify-between"
               >
 
                 {/* Date */}

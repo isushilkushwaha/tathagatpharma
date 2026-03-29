@@ -36,11 +36,13 @@ export default function HeroSlider() {
             src={image.src}
             alt={image.alt}
             fill
+            sizes="(max-width: 768px) 100vw, 80vw"
             className="object-cover"
             priority={index === 0}
+            quality={75}
           />
           {/* Subtle Overlay for text readability if needed */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+          <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent" />
         </div>
       ))}
 

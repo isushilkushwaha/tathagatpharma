@@ -26,13 +26,13 @@ const SERVICES = [
     name: "Diabetes & BP",
     desc: "Management of chronic conditions.",
     icon: Activity,
-    image: "/D&BP.jpg",
+    image: "/DBP.jpg",
   },
   {
     name: "Child & Family Care",
     desc: "Pediatric & family healthcare.",
     icon: Baby,
-    image: "/C& FC.jpg",
+    image: "/c-fc.jpg",
   },
   {
     name: "Minor Procedures",
@@ -54,7 +54,7 @@ const ServiceCard = ({
   icon: Icon,
   image,
 }: (typeof SERVICES)[0]) => (
-  <div className="group relative h-[260px] w-[70vw] sm:w-[240px] rounded-xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition flex-shrink-0 snap-center">
+  <div className="group relative h-65 w-[70vw] sm:w-60 rounded-xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-md transition shrink-0 snap-center">
     
     {/* Image */}
     <Image
@@ -63,10 +63,12 @@ const ServiceCard = ({
       fill
       className="object-cover group-hover:scale-105 transition duration-500"
       sizes="(max-width: 640px) 70vw, 240px"
+      priority={name === "General Consultation"} // 👈 only first card
+      quality={75}
     />
 
     {/* Overlay */}
-    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/40 to-transparent" />
+    <div className="absolute inset-0 bg-shrink-to-t from-slate-900/90 via-slate-900/40 to-transparent" />
 
     {/* Content */}
     <div className="relative h-full flex flex-col justify-end p-4 z-10">

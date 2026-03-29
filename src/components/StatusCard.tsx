@@ -34,7 +34,7 @@ export default function StatusCard() {
   return (
     <div className="absolute -bottom-4 -left-4 sm:-bottom-6 sm:-left-6 z-30 
                     bg-white/90 backdrop-blur-xl p-4 sm:p-5 rounded-2xl shadow-xl 
-                    border border-white/40 min-w-[140px] sm:min-w-[180px]
+                    border border-white/40 min-w-35 sm:min-w-45
                     animate-in fade-in zoom-in duration-700">
       <div className="flex items-center gap-2 mb-1">
         <div className={`w-2 h-2 rounded-full animate-pulse ${status.label === "Open Now" ? "bg-green-500" : "bg-red-500"}`} />

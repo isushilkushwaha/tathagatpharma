@@ -70,11 +70,18 @@ export default function BlogDetailPage() {
   return (
     <div className="max-w-3xl mx-auto px-4 py-10">
 
-      {/* Logo */}
-      <div className="mb-4">
-        <span className="text-green-600 font-semibold">Tathagat</span>
-        <span className="text-blue-600 ml-1 font-semibold">Pharma</span>
-      </div>
+
+      <header className="sticky top-0 z-50 bg-white border-b">
+  <div className="max-w-6xl mx-auto px-4 py-3 flex items-center">
+    
+    {/* Logo */}
+    <div>
+      <span className="text-green-600 font-semibold text-lg">Tathagat</span>
+      <span className="text-blue-600 ml-1 font-semibold text-lg">Pharma</span>
+    </div>
+
+  </div>
+</header>
 
       {/* Title */}
       <h1 className="text-3xl font-bold text-green-600">
