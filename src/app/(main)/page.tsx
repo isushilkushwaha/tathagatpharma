@@ -6,6 +6,7 @@ import AppointmentForm from "@/components/AppointmentForm";
 import BlogSection from "@/components/BlogSection";
 import RatingForm from "@/components/RatingForm";
 import RatingList from "@/components/RatingList";
+import FAQSection from "@/components/FAQSection";
 
 
 export default function Home() {
@@ -16,6 +17,7 @@ export default function Home() {
       <section id="Doctor"><DoctorSection /></section>
       <section id="Services"><ServicesSection /></section>
       <section id="appointment"><AppointmentForm /></section>
+      <section id="faq"><FAQSection /></section>
       <section id="blog"><BlogSection /></section>
       <section id="ratingL"><RatingList /></section>
       <section id="ratingF"><RatingForm /></section>

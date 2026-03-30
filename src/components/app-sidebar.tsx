@@ -22,9 +22,9 @@ import {
   Home,
   Calendar,
   FileText,
-  Users,
-  Settings,
-  LogOut,        // ✅ added
+  LogOut,
+  HelpCircle  ,
+  Star
 } from "lucide-react"
 
 import { auth } from "@/lib/firebase"
@@ -35,8 +35,8 @@ const navItems = [
   { title: "Dashboard", url: "/admin/dashboard", icon: Home },
   { title: "Appointments", url: "/admin/appointments", icon: Calendar },
   { title: "Blog", url: "/admin/blog", icon: FileText },
-  { title: "Ratings", url: "/admin/ratings", icon: Users },
-  // { title: "Settings", url: "/admin/settings", icon: Settings },
+  { title: "Ratings", url: "/admin/ratings", icon: Star },
+  { title: "FAQ", url: "/admin/faqs", icon: HelpCircle },
 ]
 
 export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {

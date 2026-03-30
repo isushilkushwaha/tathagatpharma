@@ -6,8 +6,6 @@ import { collection, onSnapshot } from "firebase/firestore";
 
 import { toast } from "sonner";
 
-import { Card } from "@/components/ui/card";
-
 import {
   LineChart,
   Line,
@@ -17,20 +15,13 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-import {
-  Calendar,
-  CheckCircle,
-  Clock,
-  Activity,
-} from "lucide-react";
-
 export default function DashboardPage() {
   const [appointments, setAppointments] = useState<any[]>([]);
   const [prevCount, setPrevCount] = useState(0);
   const [ratings, setRatings] = useState<any[]>([]);
+  const [blogs, setBlogs] = useState<any[]>([]);
 
-
-  // 🔄 REAL-TIME
+  // 🔄 APPOINTMENTS REAL-TIME
   useEffect(() => {
     const unsubscribe = onSnapshot(
       collection(db, "appointments"),
@@ -52,22 +43,24 @@ export default function DashboardPage() {
     return () => unsubscribe();
   }, [prevCount]);
 
+  // 🔄 BLOGS
   useEffect(() => {
-  const unsubscribe = onSnapshot(
-    collection(db, "blogs"),
-    (snapshot) => {
-      const data: any[] = [];
-      snapshot.forEach((doc) => {
-        data.push({ id: doc.id, ...doc.data() });
-      });
-      setBlogs(data);
-    }
-  );
+    const unsubscribe = onSnapshot(
+      collection(db, "blogs"),
+      (snapshot) => {
+        const data: any[] = [];
+        snapshot.forEach((doc) => {
+          data.push({ id: doc.id, ...doc.data() });
+        });
+        setBlogs(data);
+      }
+    );
 
-  return () => unsubscribe();
-}, []);
+    return () => unsubscribe();
+  }, []);
 
-useEffect(() => {
+  // 🔄 RATINGS
+  useEffect(() => {
     const unsubscribe = onSnapshot(
       collection(db, "ratings"),
       (snapshot) => {
@@ -82,42 +75,45 @@ useEffect(() => {
     return () => unsubscribe();
   }, []);
 
-  // 📊 STATS
+  // 📊 APPOINTMENT STATS
   const total = appointments.length;
-  const pending = appointments.filter(a => !a.status || a.status === "pending").length;
-  const approved = appointments.filter(a => a.status === "approved").length;
-  const completed = appointments.filter(a => a.status === "completed").length;
-  const [blogs, setBlogs] = useState<any[]>([]);
+  const pending = appointments.filter(
+    (a) => !a.status || a.status === "pending"
+  ).length;
+  const approved = appointments.filter(
+    (a) => a.status === "approved"
+  ).length;
+  const completed = appointments.filter(
+    (a) => a.status === "completed"
+  ).length;
 
-
+  // 📊 BLOG STATS
   const totalBlogs = blogs.length;
+  const publishedBlogs = blogs.filter(
+    (b) => b.status === "published"
+  ).length;
+  const unpublishedBlogs = totalBlogs - publishedBlogs;
 
-const publishedBlogs = blogs.filter(
-  (b) => b.status === "published"
-).length;
+  // 📊 RATINGS
+  const totalRatings = ratings.length;
 
-const unpublishedBlogs = totalBlogs - publishedBlogs;
-
-
-
- const totalRatings = ratings.length;
-
-  // ⭐ Average Rating
   const avgRating =
     totalRatings === 0
       ? 0
       : (
-          ratings.reduce((acc, r) => acc + Number(r.rating || 0), 0) /
-          totalRatings
+          ratings.reduce(
+            (acc, r) => acc + Number(r.rating || 0),
+            0
+          ) / totalRatings
         ).toFixed(1);
 
-  // ⭐ Star Breakdown
   const starCount = [5, 4, 3, 2, 1].map((star) => ({
     star,
-    count: ratings.filter((r) => Number(r.rating) === star).length,
+    count: ratings.filter(
+      (r) => Number(r.rating) === star
+    ).length,
   }));
 
-  // ✅ Approved / ⏳ Pending
   const approvedRatings = ratings.filter(
     (r) =>
       r.status === "approved" ||
@@ -126,10 +122,6 @@ const unpublishedBlogs = totalBlogs - publishedBlogs;
   ).length;
 
   const pendingRatings = totalRatings - approvedRatings;
-
-
-
-
 
   // 📈 CHART DATA
   const grouped: any = {};
@@ -145,145 +137,78 @@ const unpublishedBlogs = totalBlogs - publishedBlogs;
   }));
 
   return (
-    <div className="p-6 space-y-8">
-
-      
-      
-      {/* 📈 CHART + SUMMARY CARDS */}
-       <h3 className="text-lg font-semibold bg-blue-100">
-    Appointment Overviwe
-  </h3>
-
-<div className="bg-white p-5 rounded-xl border shadow-sm space-y-5">
-
- 
-  {/* 🔢 POINT-WISE SUMMARY */}
-  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-
-    <div className="bg-gray-50 rounded-lg p-3 text-sm">
-      <p className="text-gray-500 text-xs">Total Appointments</p>
-      <p className="font-semibold text-lg">{total}</p>
-    </div>
-
-    <div className="bg-yellow-50 rounded-lg p-3 text-sm">
-      <p className="text-yellow-600 text-xs">Pending Appointments</p>
-      <p className="font-semibold text-lg">{pending}</p>
-    </div>
-
-    <div className="bg-green-50 rounded-lg p-3 text-sm">
-      <p className="text-green-600 text-xs">Approved Appointments</p>
-      <p className="font-semibold text-lg">{approved}</p>
-    </div>
-
-    <div className="bg-blue-50 rounded-lg p-3 text-sm">
-      <p className="text-blue-600 text-xs">Completed Appointments</p>
-      <p className="font-semibold text-lg">{completed}</p>
-    </div>
-
-  </div>
-
-  {/* 📊 CHART */}
-  <ResponsiveContainer width="100%" height={250} className="bg-accent">
-    <LineChart data={chartData}>
-      <XAxis dataKey="date" />
-      <YAxis />
-      <Tooltip />
-      <Line
-        type="monotone"
-        dataKey="count"
-        strokeWidth={2}
-      />
-    </LineChart>
-  </ResponsiveContainer>
-
-</div>
+    <div className="p-3 sm:p-4 md:p-6 space-y-6">
 
       {/* ========================= */}
-{/* 📊 BLOG ANALYTICS */}
-{/* ========================= */}
-<div className="space-y-6">
-
-  <h2 className="text-lg font-semibold bg-blue-100 px-3 py-1 rounded-md">
-    Blogs Overview
-  </h2>
-
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-
-    {/* Total Blogs */}
-    <div className="bg-white p-4 rounded-xl border shadow-sm">
-      <p className="text-xs text-gray-500">Total Blogs</p>
-      <p className="text-lg font-semibold">{totalBlogs}</p>
-    </div>
-
-    {/* Published */}
-    <div className="bg-green-50 p-4 rounded-xl border shadow-sm">
-      <p className="text-xs text-green-600">Published Blogs</p>
-      <p className="text-lg font-semibold">{publishedBlogs}</p>
-    </div>
-
-    {/* Unpublished */}
-    <div className="bg-red-50 p-4 rounded-xl border shadow-sm">
-      <p className="text-xs text-red-600">Unpublished Blogs</p>
-      <p className="text-lg font-semibold">{unpublishedBlogs}</p>
-    </div>
-
-  </div>
-
-<div className="space-y-6">
-
+      {/* 📅 APPOINTMENT SECTION */}
       {/* ========================= */}
-      {/* ⭐ HEADER */}
-      {/* ========================= */}
-      <h2 className="text-lg font-semibold bg-blue-100 px-3 py-1 rounded-md">
-        Ratings Overview
-      </h2>
+      <h3 className="text-base sm:text-lg font-semibold bg-blue-100 px-3 py-2 rounded-md">
+        Appointment Overview
+      </h3>
 
-      {/* ========================= */}
-      {/* 📦 TOP CARDS */}
-      {/* ========================= */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="bg-white p-3 sm:p-4 rounded-xl border shadow-sm space-y-4">
 
-        {/* Total */}
-        <div className="bg-white p-4 rounded-xl border shadow-sm">
-          <p className="text-xs text-gray-500">Total Ratings</p>
-          <p className="text-lg font-semibold">{totalRatings}</p>
+        {/* STATS */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3">
+          <StatCard title="Total" value={total} />
+          <StatCard title="Pending" value={pending} color="yellow" />
+          <StatCard title="Approved" value={approved} color="green" />
+          <StatCard title="Completed" value={completed} color="blue" />
         </div>
 
-        {/* Average */}
-        <div className="bg-yellow-50 p-4 rounded-xl border shadow-sm">
-          <p className="text-xs text-yellow-600">Average Rating</p>
-          <p className="text-lg font-semibold">⭐ {avgRating}</p>
-        </div>
-
-        {/* Approved */}
-        <div className="bg-green-50 p-4 rounded-xl border shadow-sm">
-          <p className="text-xs text-green-600">Approved</p>
-          <p className="text-lg font-semibold">{approvedRatings}</p>
-        </div>
-
-        {/* Pending */}
-        <div className="bg-red-50 p-4 rounded-xl border shadow-sm">
-          <p className="text-xs text-red-600">Pending</p>
-          <p className="text-lg font-semibold">{pendingRatings}</p>
+        {/* CHART */}
+        <div className="overflow-x-auto">
+          <ResponsiveContainer width="100%" height={200}>
+            <LineChart data={chartData}>
+              <XAxis dataKey="date" />
+              <YAxis />
+              <Tooltip />
+              <Line type="monotone" dataKey="count" strokeWidth={2} />
+            </LineChart>
+          </ResponsiveContainer>
         </div>
 
       </div>
 
       {/* ========================= */}
-      {/* ⭐ STAR BREAKDOWN */}
+      {/* 📝 BLOG SECTION */}
       {/* ========================= */}
-      <div className="bg-white p-4 rounded-xl border shadow-sm">
+      <h2 className="text-base sm:text-lg font-semibold bg-blue-100 px-3 py-2 rounded-md">
+        Blogs Overview
+      </h2>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+        <StatCard title="Total Blogs" value={totalBlogs} />
+        <StatCard title="Published" value={publishedBlogs} color="green" />
+        <StatCard title="Unpublished" value={unpublishedBlogs} color="red" />
+      </div>
+
+      {/* ========================= */}
+      {/* ⭐ RATINGS SECTION */}
+      {/* ========================= */}
+      <h2 className="text-base sm:text-lg font-semibold bg-blue-100 px-3 py-2 rounded-md">
+        Ratings Overview
+      </h2>
+
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3">
+        <StatCard title="Total" value={totalRatings} />
+        <StatCard title="Average" value={`⭐ ${avgRating}`} color="yellow" />
+        <StatCard title="Approved" value={approvedRatings} color="green" />
+        <StatCard title="Pending" value={pendingRatings} color="red" />
+      </div>
+
+      {/* ⭐ STAR BREAKDOWN */}
+      <div className="bg-white p-3 sm:p-4 rounded-xl border shadow-sm">
         <h3 className="text-sm font-medium mb-3">
           Rating Breakdown
         </h3>
 
         {starCount.map((s) => (
-          <div key={s.star} className="flex items-center gap-3 mb-2">
+          <div key={s.star} className="flex items-center gap-2 mb-2">
+            <span className="w-5 text-xs sm:text-sm">
+              {s.star}★
+            </span>
 
-            {/* Star */}
-            <span className="w-6 text-sm">{s.star}★</span>
-
-            {/* Progress */}
             <div className="flex-1 bg-gray-200 h-2 rounded-full">
               <div
                 className="bg-yellow-400 h-2 rounded-full"
@@ -296,19 +221,46 @@ const unpublishedBlogs = totalBlogs - publishedBlogs;
               />
             </div>
 
-            {/* Count */}
             <span className="text-xs text-gray-500">
               {s.count}
             </span>
-
           </div>
         ))}
       </div>
 
     </div>
+  );
+}
 
+/* ========================= */
+/* 🔹 REUSABLE CARD */
+/* ========================= */
+function StatCard({
+  title,
+  value,
+  color,
+}: {
+  title: string;
+  value: any;
+  color?: string;
+}) {
+  const colors: any = {
+    yellow: "bg-yellow-50 text-yellow-600",
+    green: "bg-green-50 text-green-600",
+    blue: "bg-blue-50 text-blue-600",
+    red: "bg-red-50 text-red-600",
+  };
 
-</div>
+  return (
+    <div
+      className={`p-3 sm:p-4 rounded-xl border shadow-sm bg-white ${
+        color ? colors[color] : ""
+      }`}
+    >
+      <p className="text-xs opacity-70">{title}</p>
+      <p className="text-base sm:text-lg font-semibold">
+        {value}
+      </p>
     </div>
   );
 }
