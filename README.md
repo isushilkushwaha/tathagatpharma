@@ -100,7 +100,7 @@ A full-stack medical web application designed to simplify appointment booking, c
 
 * 📱 **Responsive Design**
 
-  * Optimized for all devices
+  * Optimized for all Android devices
 
 ---
 
@@ -171,8 +171,7 @@ This project helped in:
 ## 👨‍💻 Author
 
 **Sushil Kushwaha**
-🎓 Final Year BCA Student
-💼 Aspiring Full Stack Developer
+
 
 ---
 
